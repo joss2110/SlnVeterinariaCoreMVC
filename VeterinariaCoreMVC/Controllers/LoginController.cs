@@ -5,19 +5,13 @@ using System.Data.SqlClient;
 using VeterinariaCoreMVC.Models;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Text.RegularExpressions;
 
 namespace VeterinariaCoreMVC.Controllers
 {
     public class LoginController : Controller
     {
-        public async Task<IActionResult> Login()
-        {
-            Users user = new Users();
-            ViewBag.tipoDoc =
-                new SelectList(await getTipoDoc(), "idtipodoc", "description");
-
-            return View();
-        }
+        
 
         public async Task<List<TipoDoc>> getTipoDoc()
         {
@@ -57,26 +51,80 @@ namespace VeterinariaCoreMVC.Controllers
             }
         }
 
+        Users userActual = new Users();
+        void GrabarUsuario()
+        {
+            HttpContext.Session.SetString("usuarioActual",
+                    JsonConvert.SerializeObject(userActual));
+        }
+
+        public async Task<IActionResult> Login()
+        {
+            userActual = null;
+            GrabarUsuario();
+            ViewBag.tipoDoc =
+                new SelectList(await getTipoDoc(), "idtipodoc", "description");
+
+            return View();
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(int TipoDoc, string ndoc, string pasw)
         {
+            List<TipoDoc> listTipoDoc = await getTipoDoc();
+
+
+            TipoDoc tdoc = listTipoDoc.FirstOrDefault(t => t.idtipodoc == TipoDoc);
+
+            if (tdoc.tdigits == "Alfanumerico")
+            {
+                if (!Regex.IsMatch(ndoc, $@"^[a-zA-Z0-9]{{{tdoc.ndigits}}}$"))
+                {
+                    ViewBag.ErrorMessage = "Debe completar correctamente sus credenciales.";
+                    return await RetornarVistaLogin();
+                }
+            }
+            else
+            {
+                if (!Regex.IsMatch(ndoc, $@"^\d{{{tdoc.ndigits}}}$"))
+                {
+                    ViewBag.ErrorMessage = "Debe completar correctamente sus credenciales.";
+                    return await RetornarVistaLogin();
+                }
+            }
+
+            var passwordRegex = new Regex(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$");
+            if (!passwordRegex.IsMatch(pasw))
+            {
+                ViewBag.ErrorMessage = "Debe completar correctamente sus credenciales.";
+                return await RetornarVistaLogin();
+            }
+
             Users user = await logeo(TipoDoc, ndoc, pasw);
 
-            if (user.NroDocumento != "")
+            if (!string.IsNullOrEmpty(user.NroDocumento))
             {
                 ViewBag.ErrorMessage = "";
+                userActual = user;
+                GrabarUsuario();
                 return RedirectToAction("Index", "Home");
             }
             else
-            {             
-                ViewBag.tipoDoc =
-                new SelectList(await getTipoDoc(), "idtipodoc", "description");
+            {
                 ViewBag.ErrorMessage = "Intento de inicio de sesión inválido.";
-                return View("Login");
+                return await RetornarVistaLogin();
             }
         }
-        
+
+        // Método auxiliar para retornar la vista del Login con la lista de tipos de documento
+        private async Task<IActionResult> RetornarVistaLogin()
+        {
+            ViewBag.tipoDoc = new SelectList(await getTipoDoc(), "idtipodoc", "description");
+            return View("Login");
+        }
+
+
 
 
 

@@ -23,7 +23,7 @@
             <div class="col-md-4 mt-5 pt-5">
                 <div class="card px-4 py-5 border-0" style="border-radius: 1rem; background-color: rgba(255, 255, 255, 0.7); border-radius: 10px;">
                     <div class="card-body">
-                        <form asp-controller="Login" asp-action="Login" method="post">
+                        <form asp-controller="Login" asp-action="Login" method="post" id="loginForm">
                             <div class="mb-3">
                                 @if (!string.IsNullOrEmpty(ViewBag.ErrorMessage))
                                 {
@@ -34,27 +34,20 @@
 
                                 <h6 class="text-center mb-5">Login</h6>
                                 <div class="form-group">
-                                    <label asp-for="TipoDoc" class="control-label">Tipo de Documento</label>
-                                    <select asp-for="TipoDoc" asp-items="@(new SelectList(ViewBag.TipoDoc, "Value", "Text"))" class="form-control">
+                                    <select id="tipoDoc" asp-for="TipoDoc" asp-items="@(new SelectList(ViewBag.TipoDoc, "Value", "Text"))" class="form-control">
                                         <option value="">Seleccionar Tipo de Documento</option>
                                     </select>
                                     <span asp-validation-for="TipoDoc" class="text-danger"></span>
                                 </div>
                             </div>
                             <div class="mb-3">
-                                <div class="input-group mb-3">
-                                    <span class="input-group-text">
-                                        <i class="fas fa-envelope"></i>
-                                    </span>
-                                    <input name="ndoc" placeholder="Ingresa el Numero de DOC" class="form-control" />
+                                <div class="form-group mb-3">
+                                    <input id="ndoc" name="ndoc" placeholder="Ingresa el Numero de DOC" class="form-control" />
                                 </div>
                             </div>
                             <div class="mb-3">
-                                <div class="input-group mb-3">
-                                    <span class="input-group-text">
-                                        <i class="fas fa-lock"></i>
-                                    </span>
-                                    <input name="pasw" placeholder="Ingresa el password" class="form-control" type="password" />
+                                <div class="form-group mb-3">
+                                    <input id="pasw" name="pasw" placeholder="Ingresa el password" class="form-control" type="password" />
                                 </div>
                             </div>
                             <div class="d-grid gap-2 mt-5">
@@ -68,4 +61,5 @@
         </div>
     </div>
 </body>
+
 </html>
