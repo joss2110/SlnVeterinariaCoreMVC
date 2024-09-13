@@ -25,16 +25,20 @@
                     <div class="card-body">
                         <form asp-controller="Login" asp-action="Login" method="post">
                             <div class="mb-3">
-                                <a class="navbar-brand  d-block text-center">
-                                    @* <img src="@Url.Content("/Imagenes/logo.png")" alt="Flowersshoes" style="height:50px" /> *@
-                                </a>
+                                @if (!string.IsNullOrEmpty(ViewBag.ErrorMessage))
+                                {
+                                    <div class="alert alert-danger">
+                                        @ViewBag.ErrorMessage
+                                    </div>
+                                }
+
                                 <h6 class="text-center mb-5">Login</h6>
                                 <div class="form-group">
-                                    <label asp-for="TipoDoc.idtipodoc" class="control-label">Tipo de Documento</label>
-                                    <select asp-for="TipoDoc.description" asp-items="@ViewBag.TipoDoc" class="form-control">
+                                    <label asp-for="TipoDoc" class="control-label">Tipo de Documento</label>
+                                    <select asp-for="TipoDoc" asp-items="@(new SelectList(ViewBag.TipoDoc, "Value", "Text"))" class="form-control">
                                         <option value="">Seleccionar Tipo de Documento</option>
                                     </select>
-                                    <span asp-validation-for="TipoDoc.description" class="text-danger"></span>
+                                    <span asp-validation-for="TipoDoc" class="text-danger"></span>
                                 </div>
                             </div>
                             <div class="mb-3">
@@ -42,7 +46,7 @@
                                     <span class="input-group-text">
                                         <i class="fas fa-envelope"></i>
                                     </span>
-                                    @Html.TextBox("email", "", new { placeholder = "Ingresa el Numero de DOC", @class = "form-control" })
+                                    <input name="ndoc" placeholder="Ingresa el Numero de DOC" class="form-control" />
                                 </div>
                             </div>
                             <div class="mb-3">
@@ -50,13 +54,14 @@
                                     <span class="input-group-text">
                                         <i class="fas fa-lock"></i>
                                     </span>
-                                    @Html.TextBox("pass", "", new { placeholder = "Ingresa el password", @class = "form-control", type = "password" })
+                                    <input name="pasw" placeholder="Ingresa el password" class="form-control" type="password" />
                                 </div>
                             </div>
                             <div class="d-grid gap-2 mt-5">
                                 <button type="submit" class="btn bgRosa">Ingresar</button>
                             </div>
                         </form>
+
                     </div>
                 </div>
             </div>

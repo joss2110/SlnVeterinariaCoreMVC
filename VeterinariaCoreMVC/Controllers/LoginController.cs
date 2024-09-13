@@ -10,18 +10,11 @@ namespace VeterinariaCoreMVC.Controllers
 {
     public class LoginController : Controller
     {
-        //private readonly flowersshoesContext db;
-
-        ////public LoginController(flowersshoesContext ctx)
-        ////{
-        //    db = ctx;
-        //}
-
         public async Task<IActionResult> Login()
         {
+            Users user = new Users();
             ViewBag.tipoDoc =
                 new SelectList(await getTipoDoc(), "idtipodoc", "description");
-            //trabajadorActual = null;
 
             return View();
         }
@@ -41,6 +34,50 @@ namespace VeterinariaCoreMVC.Controllers
                 return JsonConvert.DeserializeObject<List<TipoDoc>>(respuestaAPI)!;
             }
         }
+        public async Task<Users> logeo(int tipodoc, string ndoc, string pasw)
+        {
+            Users user = new Users();
+
+            // permite realizar una solicitud al servicio web api
+            using (var httpcliente = new HttpClient())
+            {
+                // realizamos una solicitud Get
+                var respuesta =
+                    await httpcliente.GetAsync(
+                        $"http://localhost:5050/api/Login/Login/{ndoc}/{pasw}/{tipodoc}");
+                // convertimos el contenido de la variable respuesta a una cadena
+                string respuestaAPI = await respuesta.Content.ReadAsStringAsync();
+                if (respuestaAPI == "false") { 
+                    return user;
+                }
+                else
+                {
+                    return JsonConvert.DeserializeObject<Users>(respuestaAPI)!;
+                }
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Login(int TipoDoc, string ndoc, string pasw)
+        {
+            Users user = await logeo(TipoDoc, ndoc, pasw);
+
+            if (user.NroDocumento != "")
+            {
+                ViewBag.ErrorMessage = "";
+                return RedirectToAction("Index", "Home");
+            }
+            else
+            {             
+                ViewBag.tipoDoc =
+                new SelectList(await getTipoDoc(), "idtipodoc", "description");
+                ViewBag.ErrorMessage = "Intento de inicio de sesión inválido.";
+                return View("Login");
+            }
+        }
+        
+
 
 
 

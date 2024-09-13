@@ -12,6 +12,8 @@ var conexion = builder.Configuration.GetConnectionString("cn1");
 builder.Services.AddSession(x => x.IdleTimeout =  TimeSpan.FromMinutes(60));
 
 
+
+
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 

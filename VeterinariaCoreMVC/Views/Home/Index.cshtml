@@ -1,5 +1,39 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    Layout = "_Layout";
 }
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light mb-3" style="padding:0; background-color: #f7e8e980 ;">
+            <div class="container">
 
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-end">
+                    <ul class="navbar-nav flex-grow-0">
+                        
 
+                        
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Login" asp-action="Login" style="font-size: 1.2rem;color: black;"><i class="fa-solid fa-right-from-bracket" style="color: #dfb9c6;"></i> </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    @* @if (User == null)
+    {
+        <div class="alert alert-warning">
+            Usuario no autenticado. Por favor, inicie sesión.
+        </div>
+    } *@
+
+<h1>Bienvenido a la página principal</h1>
+<p>Contenido de la vista.</p>
+
+    @if (User == null)
+    {
+        <div class="alert alert-warning">
+            Usuario no autenticado. Por favor, inicie sesión.
+        </div>
+    }
+</body>
