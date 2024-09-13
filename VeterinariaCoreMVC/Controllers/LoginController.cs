@@ -4,80 +4,48 @@ using Microsoft.AspNetCore.Mvc;
 using System.Data.SqlClient;
 using VeterinariaCoreMVC.Models;
 using Newtonsoft.Json;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace VeterinariaCoreMVC.Controllers
 {
     public class LoginController : Controller
     {
-        private readonly flowersshoesContext db;
+        //private readonly flowersshoesContext db;
 
-        public LoginController(flowersshoesContext ctx)
-        {
-            db = ctx;
-        }
+        ////public LoginController(flowersshoesContext ctx)
+        ////{
+        //    db = ctx;
+        //}
 
-        public IActionResult Login()
+        public async Task<IActionResult> Login()
         {
-            trabajadorActual = null;
-            GrabarTrabajador();
+            ViewBag.tipoDoc =
+                new SelectList(await getTipoDoc(), "idtipodoc", "description");
+            //trabajadorActual = null;
 
             return View();
         }
 
-        TbTrabajadore? RecuperarTrabajador()
+        public async Task<List<TipoDoc>> getTipoDoc()
         {
-            var trabajadorJson = HttpContext.Session.GetString("trabajadorActual");
+            // permite realizar una solicitud al servicio web api
+            using (var httpcliente = new HttpClient())
+            {
+                // realizamos una solicitud Get
+                var respuesta =
+                    await httpcliente.GetAsync(
+                        "http://localhost:5050/api/Login/GetTipoDoc");
+                // convertimos el contenido de la variable respuesta a una cadena
+                string respuestaAPI = await respuesta.Content.ReadAsStringAsync();
 
-            if (!string.IsNullOrEmpty(trabajadorJson))
-            {
-                try
-                {
-                    return JsonConvert.DeserializeObject<TbTrabajadore>(trabajadorJson);
-                }
-                catch
-                {
-                    HttpContext.Session.Remove("trabajadorActual");
-                    return null;
-                }
-            }
-            else
-            {
-                return null;
+                return JsonConvert.DeserializeObject<List<TipoDoc>>(respuestaAPI)!;
             }
         }
 
-        TbTrabajadore trabajadorActual = new TbTrabajadore();
-        
-        void GrabarTrabajador()
-        {
-            HttpContext.Session.SetString("trabajadorActual",
-                    JsonConvert.SerializeObject(trabajadorActual));
-        }
 
-        [HttpPost]
-        public IActionResult Login(string email, string pass)
-        {
-            if (email != null && pass != null)
-            {
-                TbTrabajadore trabajadorExistente = new TbTrabajadore();
-                trabajadorExistente = db.TbTrabajadores.FirstOrDefault(t => t.Email == email)!;
-                
-                if (trabajadorExistente != null && trabajadorExistente.Pass == pass)
-                {
-                    trabajadorActual = trabajadorExistente;
-                    GrabarTrabajador();
-                    return RedirectToAction("Index", "Ventas");
-                } else
-                {
-                    ViewBag.mensaje = "El correo o contraseña no es correcto";
-                    return View("Login");
-                }
-            } else
-            {
-                ViewBag.mensaje = "Completa los campos";
-                return View("Login");
-            }
-        }
+
+
+
 
     }
 }

@@ -1,4 +1,5 @@
-﻿@{
+﻿@model VeterinariaCoreMVC.Models.Users
+@{
     ViewData["Title"] = "Login";
 }
 
@@ -15,7 +16,8 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 
-<body style="background-image: url('/Imagenes/fondo.png');">
+<body style="background-image: url('/Imagenes/fondovet.png'); background-size: cover; background-repeat: no-repeat; background-position: center center;">
+
     <div class="container mt-5">
         <div class="row justify-content-center">
             <div class="col-md-4 mt-5 pt-5">
@@ -24,14 +26,23 @@
                         <form asp-controller="Login" asp-action="Login" method="post">
                             <div class="mb-3">
                                 <a class="navbar-brand  d-block text-center">
-                                    <img src="@Url.Content("/Imagenes/logo.png")" alt="Flowersshoes" style="height:50px" />
+                                    @* <img src="@Url.Content("/Imagenes/logo.png")" alt="Flowersshoes" style="height:50px" /> *@
                                 </a>
                                 <h6 class="text-center mb-5">Login</h6>
+                                <div class="form-group">
+                                    <label asp-for="TipoDoc.idtipodoc" class="control-label">Tipo de Documento</label>
+                                    <select asp-for="TipoDoc.description" asp-items="@ViewBag.TipoDoc" class="form-control">
+                                        <option value="">Seleccionar Tipo de Documento</option>
+                                    </select>
+                                    <span asp-validation-for="TipoDoc.description" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="mb-3">
                                 <div class="input-group mb-3">
                                     <span class="input-group-text">
                                         <i class="fas fa-envelope"></i>
                                     </span>
-                                    @Html.TextBox("email", "", new { placeholder = "Ingresa el email", @class = "form-control" })
+                                    @Html.TextBox("email", "", new { placeholder = "Ingresa el Numero de DOC", @class = "form-control" })
                                 </div>
                             </div>
                             <div class="mb-3">
@@ -43,7 +54,7 @@
                                 </div>
                             </div>
                             <div class="d-grid gap-2 mt-5">
-                                <button type="submit" class="btn bgRosa">Iniciar Sesión</button>
+                                <button type="submit" class="btn bgRosa">Ingresar</button>
                             </div>
                         </form>
                     </div>

@@ -6,12 +6,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 var conexion = builder.Configuration.GetConnectionString("cn1");
 
-builder.Services.AddDbContext<flowersshoesContext>(
-    opt => opt.UseSqlServer(conexion));
-
-builder.Services.AddScoped<IngresosDAO>();
-
-builder.Services.AddScoped<VentassDAO>();
+//builder.Services.AddDbContext<flowersshoesContext>(
+    //opt => opt.UseSqlServer(conexion));
 
 builder.Services.AddSession(x => x.IdleTimeout =  TimeSpan.FromMinutes(60));
 
